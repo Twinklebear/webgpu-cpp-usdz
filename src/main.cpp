@@ -1,6 +1,7 @@
 #include <array>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <vector>
 #include "arcball_camera.h"
 #include "tinyusdz/src/prim-types.hh"
@@ -252,7 +253,7 @@ int main(int argc, const char **argv)
 
     app_state->proj = glm::perspective(
         glm::radians(50.f), static_cast<float>(win_width) / win_height, 0.1f, 1000.f);
-    app_state->camera = ArcballCamera(glm::vec3(0, 0, -2.5), glm::vec3(0), glm::vec3(0, 1, 0));
+    app_state->camera = ArcballCamera(glm::vec3(0, 125, 100), glm::vec3(0, 50, 0), glm::vec3(0, 1, 0));
 
     emscripten_set_mousemove_callback("#webgpu-canvas", app_state, true, mouse_move_callback);
     emscripten_set_wheel_callback("#webgpu-canvas", app_state, true, mouse_wheel_callback);
