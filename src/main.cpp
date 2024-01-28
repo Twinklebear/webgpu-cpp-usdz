@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 #include "arcball_camera.h"
+#include "tinyusdz/src/stage.hh"
+#include "tinyusdz/src/tinyusdz.hh"
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
 
@@ -80,6 +82,16 @@ int main(int argc, const char **argv)
             std::exit(1);
         },
         nullptr);
+
+    tinyusdz::Stage stage;
+    std::string warn, err;
+    if (!tinyusdz::LoadUSDZFromMemory(
+            chair_swan_usdz, chair_swan_usdz_size, "chair_swan.usdz", &stage, &warn, &err)) {
+        std::cout << "Failed to load USDZ! Errors: " << err << "\n";
+    }
+    std::cout << "USDZ import warnings: " << warn << "\n";
+
+    std::cout << "USDZ:\n" << tinyusdz::to_string(stage) << "\n";
 
     /*
     app_state->device.SetLoggingCallback(
@@ -280,7 +292,7 @@ int mouse_wheel_callback(int type, const EmscriptenWheelEvent *event, void *_app
     // Pinch events on the touchpad the ctrl key set
     // TODO: this likely breaks scroll on a scroll wheel, so we need a way to detect if the
     // user has a mouse and change the behavior. Need to test on a real mouse
-    if (true) {//event->mouse.ctrlKey) {
+    if (true) {  // event->mouse.ctrlKey) {
         app_state->camera.zoom(-event->deltaY * 0.005f * dpi);
         app_state->camera_changed = true;
     } else {

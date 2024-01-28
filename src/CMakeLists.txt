@@ -1,16 +1,23 @@
-embed_files(embedded_files ./triangle.wgsl)
+set(TINYUSDZ_NO_WERROR ON)
+add_subdirectory(tinyusdz tinyusdz)
+
+embed_files(embedded_files ./triangle.wgsl ./chair_swan.usdz)
 
 add_executable(wgpu_app main.cpp arcball_camera.cpp)
 
 set_target_properties(wgpu_app PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED
                                                           ON)
 
-target_link_libraries(wgpu_app PRIVATE glm embedded_files)
+target_link_libraries(wgpu_app PRIVATE glm embedded_files
+                                       tinyusdz::tinyusdz_static)
 
 target_link_options(
   wgpu_app
   PRIVATE
   "SHELL: -sENVIRONMENT='web,worker'"
+  # 4MB stack, needed for debug builds Size should be fine for regular builds as
+  # well
+  -sSTACK_SIZE=4000000
   -sEXPORT_ES6
   -sEXPORT_NAME=WGPUApp
   -sUSE_WEBGPU=1

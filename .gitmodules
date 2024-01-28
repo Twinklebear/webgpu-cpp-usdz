@@ -1,0 +1,4 @@
+[submodule "src/tinyusdz"]
+	path = src/tinyusdz
+	url = git@github.com:Twinklebear/tinyusdz.git
+	branch = will/disable-werror
