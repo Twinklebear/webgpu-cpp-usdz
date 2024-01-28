@@ -31,7 +31,8 @@ target_link_options(
   $<$<CONFIG:DEBUG>:-g>
   $<$<CONFIG:DEBUG>:-O0>
   # Exported Emscripten runtime methods
-  "SHELL:-sEXPORTED_RUNTIME_METHODS='[\"callMain\"]'")
+  "SHELL: -sEXPORTED_RUNTIME_METHODS='[\"callMain\", \"cwrap\"]'"
+  "SHELL: -sEXPORTED_FUNCTIONS='[\"_malloc\", \"_free\", \"_main\"]'")
 
 option(ENABLE_SOURCE_MAP
        "Enable source map for debug builds (breaks Chrome DWARF debugging)" OFF)

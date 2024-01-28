@@ -31,5 +31,46 @@ import WGPUApp from "./cpp/wgpu_app.js";
     } catch (e) {
         console.error(e.stack);
     }
+
+    let loadingText = document.getElementById("loading-text");
+
+    let loadUSDZBuffer = app.cwrap("load_usdz_buffer", null, ["number", "number"]);
+
+    // Setup listener to upload new USDZ files now that the app is running
+    document.getElementById("uploadUSDZ").onchange = (evt: Event) =>
+    {
+        // When we get a new file we read it into an array buffer, then allocate room in the Wasm
+        // memory and copy the array buffer in to pass it to the C++ code
+        let picker = evt.target as HTMLInputElement;
+        if (picker.files.length === 0) {
+            return;
+        }
+        loadingText.hidden = false;
+
+        let reader = new FileReader();
+        reader.onerror = () => {throw Error(`Error reading file ${picker.files[0].name}`);};
+
+        reader.onload = () =>
+        {
+            let start = performance.now();
+            let buf = reader.result as ArrayBuffer;
+
+            // Allocate room in the Wasm memory to write the USDZ buffer
+            let ptr = app._malloc(buf.byteLength);
+
+            app.HEAPU8.set(new Uint8Array(buf), ptr);
+
+            loadUSDZBuffer(ptr, buf.byteLength);
+
+            // Release the memory we allocated in the Wasm, it's no longer needed
+            app._free(ptr);
+            loadingText.hidden = true;
+
+            let end = performance.now();
+            console.log(`Import took ${end - start}ms`);
+        };
+
+        reader.readAsArrayBuffer(picker.files[0]);
+    };
 })();
 
